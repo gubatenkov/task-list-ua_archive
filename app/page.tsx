@@ -1,40 +1,37 @@
-import AuthForm from '@/components/AuthForm'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import EditTaskDialog from '@/components/EditTaskDialog'
+import columns from '@/components/TasksTable/Columns'
+import TaskCounter from '@/components/TaskCounter'
+import { getServerSession } from 'next-auth'
+import { Card } from '@/components/ui/card'
+import Table from '@/components/TasksTable'
+import { redirect } from 'next/navigation'
+import Header from '@/components/Header'
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user) redirect('/login')
+
   return (
-    <div
-      className="container relative grid h-screen flex-col items-center justify-center
-      lg:max-w-none lg:grid-cols-2 lg:px-0"
-    >
-      <div className="bg-muted relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
-        <img
-          className="absolute bottom-0 left-0 right-0 top-0 inline-flex h-full w-full object-cover"
-          src="/bg.jpg"
-          alt=""
-        />
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              “Life isn’t about finding yourself. Life is about creating
-              yourself.” -
-            </p>
-            <footer className="text-sm">George Bernard Shaw</footer>
-          </blockquote>
-        </div>
-      </div>
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Login to account
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Enter email below to enter in your account
-            </p>
-          </div>
-          <AuthForm />
-        </div>
-      </div>
-    </div>
+    <>
+      <Header />
+      <main
+        className="container mb-12 mt-8 h-full flex-1 flex-col px-4
+        sm:px-8"
+      >
+        <section className="mb-4">
+          <h2 className="mb-2 text-4xl font-bold tracking-tight">
+            Welcome, Elon!
+          </h2>
+          <p className="text-muted-foreground">
+            Here are <TaskCounter /> tasks on you for today.
+          </p>
+        </section>
+        <Card className="xs:p-8 overflow-hidden p-2">
+          <Table columns={columns} />
+        </Card>
+      </main>
+      <EditTaskDialog />
+    </>
   )
 }
