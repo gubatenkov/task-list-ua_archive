@@ -1,10 +1,10 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import EditTaskDialog from '@/components/EditTaskDialog'
 import columns from '@/components/TasksTable/Columns'
 import TaskCounter from '@/components/TaskCounter'
 import { getServerSession } from 'next-auth'
 import { Card } from '@/components/ui/card'
 import Table from '@/components/TasksTable'
+import authOptions from '@/lib/authConfig'
 import { redirect } from 'next/navigation'
 import Header from '@/components/Header'
 
