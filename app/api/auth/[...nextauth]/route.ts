@@ -1,8 +1,9 @@
-import type { NextApiResponse, NextApiRequest } from 'next'
+// import type { NextApiResponse, NextApiRequest } from 'next'
+import type { AuthOptions } from 'next-auth'
 
 import CredentialsProvider from 'next-auth/providers/credentials'
-import NextAuth, { type AuthOptions } from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
+import NextAuth from 'next-auth/next'
 import prisma from '@/lib/prisma'
 import { compare } from 'bcrypt'
 
@@ -75,12 +76,12 @@ export const authOptions: AuthOptions = {
   adapter,
 }
 
-export const getAuthOptions = (
-  req: NextApiRequest,
-  res: NextApiResponse
-): AuthOptions => {
-  return authOptions
-}
+// export const getAuthOptions = (
+//   req: NextApiRequest,
+//   res: NextApiResponse
+// ): AuthOptions => {
+//   return authOptions
+// }
 
 const handler = NextAuth(authOptions)
 
