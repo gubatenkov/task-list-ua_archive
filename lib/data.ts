@@ -1,3 +1,5 @@
+import type { TTaskPriority, TTaskStatus, TTaskLabel } from '@/lib/schemaTypes'
+
 import {
   QuestionMarkCircledIcon,
   CheckCircledIcon,
@@ -8,7 +10,6 @@ import {
   ArrowUpIcon,
   CircleIcon,
 } from '@radix-ui/react-icons'
-import { TTaskPriority, TTaskStatus, TTaskLabel } from '@/lib/schemasTypes.ts'
 
 export const iconsMap = {
   QuestionMarkCircledIcon,
