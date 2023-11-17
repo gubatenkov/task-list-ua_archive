@@ -43,7 +43,7 @@ const columns: ColumnDef<TTask>[] = [
   },
   {
     cell: ({ row }) => {
-      const status: TTaskStatus = statuses.find(
+      const status: TTaskStatus | undefined = statuses.find(
         (status) => status.value === row.getValue('status')
       )
 
@@ -73,7 +73,7 @@ const columns: ColumnDef<TTask>[] = [
   },
   {
     cell: ({ row }) => {
-      const priority: TTaskPriority = priorities.find(
+      const priority: TTaskPriority | undefined = priorities.find(
         (priority) => priority.value === row.getValue('priority')
       )
 
