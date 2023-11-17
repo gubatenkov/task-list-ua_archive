@@ -1,4 +1,4 @@
-import type { TTaskLabelValue, TTask } from '@/lib/schemasTypes.ts'
+import type { TTaskLabelValue, TTask } from '@/lib/schemaTypes'
 
 import {
   DropdownMenuRadioGroup,
@@ -14,11 +14,11 @@ import {
   DropdownMenu,
 } from '@/components/ui/dropdown-menu'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { useToast } from '@/components/ui/use-toast.ts'
-import { useTasksStore } from '@/stores/tasksStore.ts'
+import { useToast } from '@/components/ui/use-toast'
+import { useTasksStore } from '@/stores/tasksStore'
 import { Button } from '@/components/ui/button'
 import { Row } from '@tanstack/react-table'
-import { labels } from '@/lib/data.ts'
+import { labels } from '@/lib/data'
 
 interface TableRowActionsProps<TData> {
   row: Row<TData>

@@ -1,7 +1,7 @@
 import { PlusCircledIcon, Cross2Icon } from '@radix-ui/react-icons'
-import { useToast } from '@/components/ui/use-toast.ts'
-import { useTasksStore } from '@/stores/tasksStore.ts'
-import { priorities, statuses } from '@/lib/data.ts'
+import { useToast } from '@/components/ui/use-toast'
+import { useTasksStore } from '@/stores/tasksStore'
+import { priorities, statuses } from '@/lib/data'
 import { Button } from '@/components/ui/button'
 import { Table } from '@tanstack/react-table'
 import { Input } from '@/components/ui/input'
@@ -71,7 +71,7 @@ export default function TableToolbar<TData>({
             )}
             {isFiltered && (
               <Button
-                className="hidden h-8 px-2 xs:flex lg:px-3"
+                className="xs:flex hidden h-8 px-2 lg:px-3"
                 onClick={() => table.resetColumnFilters()}
                 variant="ghost"
               >
