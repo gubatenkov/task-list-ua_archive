@@ -1,8 +1,9 @@
-import type { TTaskLabelValue, TTask } from '@/lib/schemaTypes'
+import type { TTaskLabelValue, TTask } from '@/app/lib/schemaTypes'
 
 import { createJSONStorage, persist } from 'zustand/middleware'
-import initialTasks from '@/lib/tasks.json'
-import { getRandomInt } from '@/lib/utils'
+import initialTasks from '@/app/lib/tasks.json'
+import { getRandomInt } from '@/app/lib/utils'
+import prisma from '@/app/lib/prisma'
 import { create } from 'zustand'
 
 type Store = {
