@@ -40,8 +40,7 @@
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.0",
-    "valibot": "^0.20.1",
-    "zustand": "^4.4.6"
+    "valibot": "^0.20.1"
   },
   "devDependencies": {
     "@types/node": "^20",
