@@ -6,6 +6,7 @@ import TaskCounter from '@/app/ui/TaskCounter'
 import { Skeleton } from '@/app/ui/skeleton'
 import Table from '@/app/ui/TasksTable'
 import { Card } from '@/app/ui/card'
+import Clock from '@/app/ui/Clock'
 import { Suspense } from 'react'
 
 type Props = {
@@ -19,7 +20,7 @@ type Props = {
 }
 
 export const metadata: Metadata = {
-  title: 'View All',
+  title: 'View all',
   description: '',
 }
 
@@ -35,8 +36,8 @@ export default async function Home({ searchParams }: Props) {
   return (
     <>
       <section className="mb-2 xs:mb-4">
-        <h2 className="mb-0 text-2xl font-bold leading-5 tracking-tight xs:mb-1 xs:text-4xl xs:leading-10">
-          Welcome, Elon!
+        <h2 className="mb-0 text-2xl font-bold leading-[1.25] tracking-tight xs:mb-1 xs:text-4xl xs:leading-10">
+          Welcome! It&apos;s <Clock /> in Odessa.
         </h2>
         <div className="inline-flex items-center text-xs text-muted-foreground xs:text-base">
           <p>Here are</p>
