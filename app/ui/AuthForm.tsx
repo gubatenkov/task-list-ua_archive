@@ -44,9 +44,10 @@ export default function AuthForm({ className, ...props }: AuthFormProps) {
       await authenticateUserViaCredentials(formData)
 
     if (error) {
+      console.log(error)
       setIsFetching(false)
       toast({
-        description: error.message,
+        description: message,
         title: 'Error!',
       })
     } else if (success) {

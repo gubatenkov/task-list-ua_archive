@@ -103,8 +103,8 @@ export async function authenticateUserViaCredentials(formData: FieldValues) {
     return {
       error: {
         data: JSON.stringify((error as Error).message),
-        message: 'Authentication failed.',
       },
+      message: 'Authentication failed.',
       success: false,
     }
   }
