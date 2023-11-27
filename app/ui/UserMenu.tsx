@@ -23,23 +23,28 @@ export default function UserMenu() {
   const { toast } = useToast()
 
   const handleLogOut = async () => {
-    const response = await signOutUser()
-    if (response.success) {
+    try {
+      const { success, message, error } = await signOutUser()
+
+      if (success) {
+        toast({
+          description: message,
+          title: 'Success!',
+        })
+        router.push('/login')
+      } else {
+        console.log(error)
+        toast({
+          description: 'Unexpected operation result.',
+          title: 'Oops!',
+        })
+      }
+    } catch (e) {
+      const err = e as Error
+      console.log(err)
       toast({
-        description: response.message,
-        title: 'Success!',
-      })
-      router.push('/login')
-    } else if (response.error) {
-      console.log(response.error.data)
-      toast({
-        description: response.error.message,
+        description: err.message,
         title: 'Error!',
-      })
-    } else {
-      toast({
-        description: 'Unexpected operation result.',
-        title: 'Oops!',
       })
     }
   }
