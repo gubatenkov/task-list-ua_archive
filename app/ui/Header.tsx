@@ -24,7 +24,7 @@ export default function Header() {
               buttonVariants({ variant: 'ghost' }),
               'mr-4 !h-9 px-2.5'
             )}
-            href="https://github.com/gubatenkov/tasks-table.git"
+            href={process.env.NEXTGITHUB_REPO_URL}
             target="_blank"
           >
             <GitHubLogoIcon height={16} width={16} />

@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <>
       <Header />
       <div
-        className="container my-6 h-full flex-1 flex-col px-4 xs:my-8
+        className="container my-4 h-full flex-1 flex-col px-4 xs:my-8
         sm:px-8"
       >
         {children}

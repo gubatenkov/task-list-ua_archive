@@ -20,7 +20,7 @@ export default function TableSearch<TData>() {
     params.set('page', '1')
     term ? params.set('search_query', term) : params.delete('search_query')
     replace(`${pathname}?${params.toString()}`)
-  }, 400)
+  }, 350)
 
   return (
     <Input

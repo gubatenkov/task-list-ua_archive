@@ -73,8 +73,8 @@ export default function TablePagination<TData>({
     <div className="flex w-full items-center justify-between xs:px-2">
       <div className="hidden xs:block" />
       <div
-        className="flex w-full flex-col items-center space-x-6 xs:w-fit
-        xs:flex-row lg:space-x-8"
+        className="ml-auto flex w-full max-w-[13rem] flex-col items-center space-x-6
+        xs:ml-[none] xs:w-fit xs:max-w-none xs:flex-row lg:space-x-8"
       >
         <div
           className="mb-2 flex w-full items-center justify-between space-x-2

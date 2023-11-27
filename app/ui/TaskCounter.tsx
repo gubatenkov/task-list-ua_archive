@@ -1,6 +1,6 @@
-import { fetchTasksCount } from '@/app/lib/actions'
+import { getTasksCount } from '@/app/lib/actions'
 
 export default async function TaskCounter() {
-  const totalTaskCount = await fetchTasksCount()
+  const totalTaskCount = await getTasksCount()
   return <span className="mx-2 inline-block font-bold">{totalTaskCount}</span>
 }

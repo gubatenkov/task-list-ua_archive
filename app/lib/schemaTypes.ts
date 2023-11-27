@@ -10,6 +10,9 @@ import {
   date,
 } from 'valibot'
 
+export type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}
 export type TTaskPriorityValue = Output<typeof TaskPriorityValueSchema>
 export type TTaskStatusValue = Output<typeof TaskStatusValueSchema>
 export type TUserCredentials = Output<typeof UserCredentialsSchema>
@@ -19,15 +22,9 @@ export type TTaskPriority = Output<typeof TaskPrioritySchema>
 export type TTaskStatus = Output<typeof TaskStatusSchema>
 export type TTaskLabel = Output<typeof TaskLabelSchema>
 export type TLoginForm = Output<typeof LoginFormSchema>
+export type TTaskForm = Output<typeof TaskFormSchema>
 export type TTask = Output<typeof TaskSchema>
 export type TUser = Output<typeof UserSchema>
-export type TColumn = {
-  priority: string
-  status: string
-  title: string
-  label: string
-  id: string
-}
 
 export const TaskLabelSchema = union([
   object({
@@ -108,6 +105,8 @@ export const TaskSchema = object({
   priority: TaskPriorityValueSchema,
   status: TaskStatusValueSchema,
   label: TaskLabelValueSchema,
+  createdAt: date(),
+  userId: string(),
   title: string(),
   id: string(),
 })
@@ -179,4 +178,5 @@ export const TaskFormSchema = object({
   ]),
   priority: TaskPriorityValueSchema,
   status: TaskStatusValueSchema,
+  label: TaskLabelValueSchema,
 })

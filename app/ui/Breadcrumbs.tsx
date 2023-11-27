@@ -13,17 +13,23 @@ export default function Breadcrumbs({
   breadcrumbs: Breadcrumb[]
 }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-6 block">
-      <ol className={clsx('font-inter flex text-lg font-normal md:text-base')}>
+    <nav aria-label="Breadcrumb" className="block">
+      <ol
+        className={clsx(
+          'font-inter flex text-base font-normal xs:text-lg md:text-base'
+        )}
+      >
         {breadcrumbs.map((breadcrumb, index) => (
           <li
-            className={clsx(
-              breadcrumb.active ? 'text-gray-900' : 'text-gray-500'
-            )}
+            className={'text-muted-foreground'}
             aria-current={breadcrumb.active}
             key={breadcrumb.href}
           >
-            <Link href={breadcrumb.href}>{breadcrumb.label}</Link>
+            {breadcrumb.active ? (
+              <Link href={breadcrumb.href}>{breadcrumb.label}</Link>
+            ) : (
+              <span>{breadcrumb.label}</span>
+            )}
             {index < breadcrumbs.length - 1 ? (
               <span className="mx-3 inline-block">/</span>
             ) : null}

@@ -19,7 +19,6 @@ import { Button } from '@/app/ui/button'
 
 export default function UserMenu() {
   const { data: session } = useSession()
-
   const router = useRouter()
   const { toast } = useToast()
 
@@ -50,8 +49,8 @@ export default function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button className="relative h-8 w-8 rounded-full" variant="ghost">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={session?.user?.image ?? ''} alt="" />
-            <AvatarFallback>SC</AvatarFallback>
+            <AvatarImage src={session?.user?.image || '/avatar.png'} alt="" />
+            <AvatarFallback>EM</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -59,7 +58,7 @@ export default function UserMenu() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {session?.user?.name ?? 'User'}
+              {session?.user?.name ?? 'Elon Musk'}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {session?.user?.email ?? 'elon.musk@spacex.com'}

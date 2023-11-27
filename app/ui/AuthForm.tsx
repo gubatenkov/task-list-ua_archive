@@ -1,11 +1,14 @@
 'use client'
 
+import {
+  authenticateUserViaCredentials,
+  authenticateUserViaGithub,
+} from '@/app/lib/actions'
 import { type TLoginForm, LoginFormSchema } from '@/app/lib/schemaTypes'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { type FieldValues, useForm } from 'react-hook-form'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import { type HTMLAttributes, useState } from 'react'
-import { authenticateUser } from '@/app/lib/actions'
 import { useToast } from '@/app/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import { Loader2Icon } from 'lucide-react'
@@ -14,7 +17,7 @@ import { Input } from '@/app/ui/input'
 import { Label } from '@/app/ui/label'
 import { cn } from '@/app/lib/utils'
 
-interface AuthFormProps extends HTMLAttributes<HTMLDivElement> {}
+interface AuthFormProps extends HTMLAttributes<HTMLFormElement> {}
 
 export default function AuthForm({ className, ...props }: AuthFormProps) {
   const {
@@ -32,17 +35,19 @@ export default function AuthForm({ className, ...props }: AuthFormProps) {
 
   const onSubmit = async (formData: FieldValues) => {
     setIsFetching(true)
-    const result = await authenticateUser(formData)
 
-    if (result.error) {
+    const { success, message, error } =
+      await authenticateUserViaCredentials(formData)
+
+    if (error) {
       setIsFetching(false)
       toast({
-        description: result.error.message,
+        description: error.message,
         title: 'Error!',
       })
-    } else if (result.success) {
+    } else if (success) {
       toast({
-        description: result.message,
+        description: message,
         title: 'Success!',
       })
       setIsFetching(false)
@@ -56,9 +61,16 @@ export default function AuthForm({ className, ...props }: AuthFormProps) {
     }
   }
 
+  const handleGithubLogin = async () => {
+    setIsFetching(true)
+    const { redirectUrl, success } = await authenticateUserViaGithub()
+    setIsFetching(true)
+    success ? router.push(redirectUrl) : null
+  }
+
   return (
-    <div className={cn('grid gap-6', className)} {...props}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <div className={cn('grid gap-6', className)}>
+      <form onSubmit={handleSubmit(onSubmit)} {...props}>
         <div className="grid">
           <div className="mb-4 grid">
             <Label className="sr-only" htmlFor="email">
@@ -86,7 +98,7 @@ export default function AuthForm({ className, ...props }: AuthFormProps) {
               id="password"
             />
           </div>
-          <Button disabled={isFetching} className="relative">
+          <Button disabled={isFetching} className="relative" type="submit">
             <Loader2Icon
               className={cn(
                 'absolute left-[calc(50%-5.25rem)] mr-2 hidden h-4 w-4 animate-spin',
@@ -109,7 +121,11 @@ export default function AuthForm({ className, ...props }: AuthFormProps) {
           </span>
         </div>
       </div>
-      <Button disabled={isFetching} variant="outline" type="button">
+      <Button
+        onClick={handleGithubLogin}
+        disabled={isFetching}
+        variant="outline"
+      >
         {isFetching ? (
           <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
         ) : (

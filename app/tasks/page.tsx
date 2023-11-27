@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
 
-import {
-  getUserTasksByParamsAndFilters,
-  fetchTasksCount,
-} from '@/app/lib/actions'
 import columns from '@/app/ui/TasksTable/Columns'
+import { getUserTasks } from '@/app/lib/actions'
 import TaskCounter from '@/app/ui/TaskCounter'
 import { Skeleton } from '@/app/ui/skeleton'
 import Table from '@/app/ui/TasksTable'
@@ -27,7 +24,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Home({ searchParams }: Props) {
-  const { totalTaskCount, tasks } = await getUserTasksByParamsAndFilters({
+  const { totalTaskCount, tasks } = await getUserTasks({
     perPageParam: searchParams?.per_page,
     query: searchParams?.search_query,
     priority: searchParams?.priority,
@@ -43,7 +40,9 @@ export default async function Home({ searchParams }: Props) {
         </h2>
         <div className="inline-flex items-center text-xs text-muted-foreground xs:text-base">
           <p>Here are</p>
-          <Suspense fallback={<Skeleton className="mx-2 h-6 w-8" />}>
+          <Suspense
+            fallback={<Skeleton className="h4 mx-2 w-6 xs:h-6 xs:w-8" />}
+          >
             <TaskCounter />
           </Suspense>
           <p>tasks on you for today.</p>

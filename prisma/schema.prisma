@@ -1,12 +1,12 @@
-datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL")
+  directUrl         = env("POSTGRES_URL_NON_POOLING")
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model Account {
@@ -15,15 +15,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -37,31 +36,32 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
   password      String
-  email         String?    @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  UserTask      UserTask[]
+  tasks         Task[]
 }
 
 model VerificationToken {
   identifier String
-  token      String       @unique
+  token      String   @unique
   expires    DateTime
 
   @@unique([identifier, token])
 }
 
-model UserTask {
-  id            String    @id @unique @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  priority      String
-  status        String
-  label         String
-  title         String
+model Task {
+  id        String    @id @unique @default(cuid())
+  userId    String
+  priority  String
+  status    String
+  label     String
+  title     String
+  createdAt DateTime? @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

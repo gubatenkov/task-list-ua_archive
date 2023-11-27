@@ -38,7 +38,7 @@ export default function TasksTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
-    enableRowSelection: false,
+    enableRowSelection: true,
     manualFiltering: false,
     data: localData,
     columns,

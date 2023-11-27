@@ -1,4 +1,5 @@
 import type { TTaskLabelValue, TTask } from '@/app/lib/schemaTypes'
+import type { SetStateAction, Dispatch } from 'react'
 import type { Row } from '@tanstack/react-table'
 
 import {
@@ -14,11 +15,11 @@ import {
   DropdownMenuSub,
   DropdownMenu,
 } from '@/app/ui/dropdown-menu'
-import { startTransition, SetStateAction, Dispatch } from 'react'
+import { updateTaskLabelById, deleteTask } from '@/app/lib/actions'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { updateTaskLabelById } from '@/app/lib/actions'
 import { useToast } from '@/app/ui/use-toast'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { Button } from '@/app/ui/button'
 import { labels } from '@/app/lib/data'
 
@@ -28,41 +29,68 @@ interface TableRowActionsProps<TData> {
 }
 
 export default function TableRowActions<TData extends TTask>({
+  row: { toggleSelected, original: task },
   setLocalData,
-  row,
 }: TableRowActionsProps<TData>) {
-  const task = row.original
+  const [isDeleted, setIsDeleted] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
-  const handleLabelChange = (labelValue: string) => {
-    const newLabel = labelValue as TTaskLabelValue
-    // First immediately update label in local task
-    setLocalData((prev) => {
-      return prev.map((prevTask) =>
-        prevTask.id === task.id
-          ? {
-              ...prevTask,
-              label: newLabel,
-            }
-          : prevTask
-      )
-    })
-    // Then query update of task label in database
-    updateTaskLabelById(task.id, newLabel)
+  const handleDelete = async () => {
+    const result = await deleteTask(task.id)
+    if (result.success) {
+      toast({
+        description: result.message,
+        title: 'Success!',
+      })
+      blockRow()
+    } else {
+      toast({
+        description: result.message,
+        title: 'Error!',
+      })
+    }
   }
 
-  const handleDelete = () => {
-    // deleteTask(task.id)
-    toast({
-      description: `Task ${task.id} has been successfully deleted ❌`,
-      title: 'Success!',
+  const blockRow = () => {
+    toggleSelected(true)
+    setIsDeleted(true)
+  }
+
+  useEffect(() => {
+    return toggleSelected(false)
+  }, [toggleSelected])
+
+  const updateLocalTaskLabel = (label: TTaskLabelValue) => {
+    let prevLabel = 'feature'
+    setLocalData((prev) => {
+      return prev.map((prevTask) => {
+        if (prevTask.id === task.id) {
+          prevLabel = prevTask.label
+          return {
+            ...prevTask,
+            label,
+          }
+        }
+        return prevTask
+      })
     })
+    return prevLabel as TTaskLabelValue
+  }
+
+  const handleLabelChange = async (labelValue: string) => {
+    const newLabel = labelValue as TTaskLabelValue
+    // First immediately update label in local task
+    const prevLabel = updateLocalTaskLabel(newLabel)
+    // Then query update of task label in database
+    const result = await updateTaskLabelById(task.id, newLabel)
+    // If task label was not updated in db, restore original value
+    if (!result.success) updateLocalTaskLabel(prevLabel)
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger disabled={isDeleted} asChild>
         <Button
           className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
           variant="ghost"

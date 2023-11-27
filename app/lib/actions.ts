@@ -9,21 +9,15 @@ import {
   validateStatusFilter,
   validPageParams,
 } from '@/app/lib/utils'
-import { UserCredentialsSchema } from '@/app/lib/schemaTypes'
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { UserCredentialsSchema, type TTaskForm } from '@/app/lib/schemaTypes'
 import { signOut, signIn, auth } from '@/auth'
+import { safeParse, string } from 'valibot'
+import { revalidateTag } from 'next/cache'
 import prisma from '@/app/lib/prisma'
-import { safeParse } from 'valibot'
-import { hash } from 'bcrypt'
+import { hash } from 'bcryptjs'
 
-// export type State = {
-//   errors?: {
-//     password?: string[]
-//     email?: string[]
-//     name?: string[]
-//   }
-//   message?: string | null
-// }
+import TaskWhereInput = Prisma.TaskWhereInput
+import { Prisma } from '.prisma/client'
 
 export const createUser = async (formData: FieldValues) => {
   const validatedCredentials = safeParse(UserCredentialsSchema, formData)
@@ -94,22 +88,46 @@ export const createUser = async (formData: FieldValues) => {
   }
 }
 
-export async function authenticateUser(formData: FieldValues) {
+export async function authenticateUserViaCredentials(formData: FieldValues) {
   try {
     await signIn('credentials', {
       redirect: false,
       ...formData,
     })
+
     return {
-      message: 'Successfully authenticated.',
+      message: 'Authenticated successfully.',
       success: true,
     }
   } catch (error) {
     return {
       error: {
         data: JSON.stringify((error as Error).message),
-        message: 'Authentication error.',
+        message: 'Authentication failed.',
       },
+      success: false,
+    }
+  }
+}
+
+export async function authenticateUserViaGithub() {
+  try {
+    const response = await signIn('github', {
+      redirect: false,
+    })
+
+    return {
+      message: 'Authenticated successfully.',
+      redirectUrl: response,
+      success: true,
+    }
+  } catch (error) {
+    return {
+      error: {
+        data: JSON.stringify((error as Error).message),
+        message: 'Authentication failed.',
+      },
+      redirectUrl: null,
       success: false,
     }
   }
@@ -137,7 +155,19 @@ type MySession = Omit<Session, 'user'> & {
   user: { email: string; image: string; name: string; id: string }
 }
 
-export async function getUserTasksByParamsAndFilters({
+export async function getTasksCount(): Promise<number> {
+  const session = (await auth()) as MySession
+  if (!session?.user?.id) return 0
+
+  try {
+    return await prisma.task.count()
+  } catch (error) {
+    console.log(error)
+  }
+  return 0
+}
+
+export async function getUserTasks({
   perPageParam,
   pageParam,
   priority,
@@ -164,29 +194,44 @@ export async function getUserTasksByParamsAndFilters({
     pageParam,
   })
 
+  // Specify query params
+  const where: TaskWhereInput = {
+    title: {
+      mode: 'insensitive',
+      contains,
+    },
+    priority: {
+      contains: validPriority,
+    },
+    status: {
+      contains: validStatus,
+    },
+    // For now return tall asks for each user in system
+    // userId: session.user.id,
+  }
+
   try {
-    const tasks = (await prisma.userTask.findMany({
-      where: {
-        title: {
-          mode: 'insensitive',
-          contains,
-        },
-        priority: {
-          contains: validPriority,
-        },
-        status: {
-          contains: validStatus,
-        },
-        userId: session.user.id,
+    const tasks = (await prisma.task.findMany({
+      // sorting
+      orderBy: {
+        createdAt: 'desc',
       },
+      // pagination
       skip: (page - 1) * perPage,
       take: perPage,
+      // params
+      where,
     })) as TTask[]
-    const totalTaskCount = await prisma.userTask.count({
-      where: {
-        userId: session.user.id,
-      },
-    })
+
+    const totalTaskCount = await prisma.task.count<
+      { where: typeof where } | {}
+    >(
+      query
+        ? {
+            where,
+          }
+        : {}
+    )
     return { totalTaskCount, tasks }
   } catch (error) {
     console.log(error)
@@ -194,16 +239,112 @@ export async function getUserTasksByParamsAndFilters({
   }
 }
 
-export async function fetchTasksCount(): Promise<number> {
+export async function createTask(formFields: TTaskForm) {
+  // Get session
   const session = (await auth()) as MySession
-  if (!session?.user?.id) return 0
 
+  // Return message if no user id in session
+  if (!session?.user?.id)
+    return {
+      message: 'There is no user ID for which to assign a task.',
+      success: false,
+      task: null,
+    }
+
+  // Create and assign new task to user
   try {
-    return await prisma.userTask.count()
+    const newTask = await prisma.task.create({
+      data: { ...formFields, userId: session.user.id },
+    })
+    revalidateTag('/tasks')
+    return { message: `Task has been created.`, success: true, task: newTask }
   } catch (error) {
     console.log(error)
+    return {
+      message: `Error trying to create task.`,
+      success: false,
+      task: null,
+    }
   }
-  return 0
+}
+
+export async function updateTask(taskId: unknown, formFields: TTaskForm) {
+  const validTaskId = safeParse(string(), taskId)
+
+  // Return message if no task id
+  if (!validTaskId.success)
+    return {
+      message: 'Task id is not valid.',
+      success: false,
+      task: null,
+    }
+
+  // Create and assign new task to user
+  try {
+    const updatedTask = await prisma.task.update({
+      where: {
+        id: validTaskId.output,
+      },
+      data: formFields,
+    })
+    revalidateTag('/tasks')
+    return {
+      message: `Task info has been updated.`,
+      task: updatedTask,
+      success: true,
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      message: `Error trying to create task.`,
+      success: false,
+      task: null,
+    }
+  }
+}
+
+export async function getUserTaskById(id: unknown) {
+  const validatedTaskId = safeParse(string(), id)
+
+  // If validation fails, return errors early. Otherwise, continue.
+  if (!validatedTaskId.success) {
+    return { message: 'Invalid task id.', success: false }
+  }
+
+  try {
+    const task = await prisma.task.findUnique({
+      where: {
+        id: validatedTaskId.output,
+      },
+    })
+    return { success: true, task }
+  } catch (e) {
+    return {
+      // message: 'Error trying to get task by provided id.',
+      success: false,
+      task: null,
+    }
+  }
+}
+
+export async function deleteTask(id: string) {
+  try {
+    const deletedTask = await prisma.task.delete({
+      where: {
+        id,
+      },
+    })
+    return {
+      message: `Task ${deletedTask.id} has been deleted.`,
+      success: true,
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      message: 'An error occurred while trying to delete a task',
+      success: false,
+    }
+  }
 }
 
 export async function updateTaskLabelById(
@@ -211,7 +352,7 @@ export async function updateTaskLabelById(
   label: TTaskLabelValue
 ) {
   try {
-    await prisma.userTask.update({
+    await prisma.task.update({
       where: {
         id: taskId,
       },
@@ -219,7 +360,9 @@ export async function updateTaskLabelById(
         label,
       },
     })
+    return { success: true }
   } catch (error) {
     console.log(error)
+    return { success: false }
   }
 }

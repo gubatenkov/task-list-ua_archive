@@ -6,12 +6,19 @@ import {
   DropdownMenuItem,
   DropdownMenu,
 } from '@/app/ui/dropdown-menu'
-import { useThemeStore } from '@/stores/themeStore'
+import { useEffect, useState } from 'react'
 import { Button } from '@/app/ui/button'
 import { Moon, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
 
 export default function ThemeToggler() {
-  const { setTheme } = useThemeStore()
+  const [isMounted, setMounted] = useState(false)
+  const { setTheme } = useTheme()
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <DropdownMenu>
@@ -22,7 +29,7 @@ export default function ThemeToggler() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent defaultValue="system" align="end">
         <DropdownMenuItem onClick={() => setTheme('light')}>
           Light
         </DropdownMenuItem>
