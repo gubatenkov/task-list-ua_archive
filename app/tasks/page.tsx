@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   description: '',
 }
 
+export const runtime = 'edge'
+
 export default async function Home({ searchParams }: Props) {
   const { totalTaskCount, tasks } = await getUserTasks({
     perPageParam: searchParams?.per_page,

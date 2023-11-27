@@ -19,6 +19,8 @@ import { hash } from 'bcryptjs'
 import TaskWhereInput = Prisma.TaskWhereInput
 import { Prisma } from '.prisma/client'
 
+export const runtime = 'edge'
+
 export const createUser = async (formData: FieldValues) => {
   const validatedCredentials = safeParse(UserCredentialsSchema, formData)
 
