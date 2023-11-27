@@ -86,7 +86,7 @@ export default function RegisterForm({
             </Label>
             <Input
               {...register('email')}
-              placeholder="email@example.com"
+              placeholder="Your email"
               autoCapitalize="none"
               disabled={isFetching}
               autoComplete="email"

@@ -11,7 +11,7 @@ export default function TRow<TData>({
   return (
     <TableRow
       className={cn('', {
-        'opacity-50 hover:bg-white': getIsSelected(),
+        'opacity-50': getIsSelected(),
       })}
       // data-state={getIsSelected() && 'selected'}
     >

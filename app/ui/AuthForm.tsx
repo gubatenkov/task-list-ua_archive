@@ -26,6 +26,10 @@ export default function AuthForm({ className, ...props }: AuthFormProps) {
     handleSubmit,
     register,
   } = useForm<TLoginForm>({
+    defaultValues: {
+      email: 'elon.musk@spacex.com',
+      password: 'qwerty',
+    },
     resolver: valibotResolver(LoginFormSchema),
     mode: 'onSubmit',
   })

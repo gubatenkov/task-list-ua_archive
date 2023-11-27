@@ -243,7 +243,7 @@ export async function createTask(formFields: TTaskForm) {
   // Get session
   const session = (await auth()) as MySession
 
-  // Return message if no user id in session
+  // Return message if session is not valid
   if (!session?.user?.id)
     return {
       message: 'There is no user ID for which to assign a task.',
@@ -251,7 +251,35 @@ export async function createTask(formFields: TTaskForm) {
       task: null,
     }
 
-  // Create and assign new task to user
+  /*  For third-party providers, first create a
+   *  passwordless user record */
+  try {
+    const isUserExist = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+    })
+
+    if (!isUserExist) {
+      await prisma.user.create({
+        data: {
+          email: session.user.email,
+          image: session.user.image,
+          name: session.user.name,
+          id: session.user.id,
+          password: '',
+        },
+      })
+    }
+  } catch (error) {
+    return {
+      message: `Error trying to create task.`,
+      success: false,
+      task: null,
+    }
+  }
+
+  // Finally, create and assign new task to user
   try {
     const newTask = await prisma.task.create({
       data: { ...formFields, userId: session.user.id },
@@ -259,7 +287,6 @@ export async function createTask(formFields: TTaskForm) {
     revalidateTag('/tasks')
     return { message: `Task has been created.`, success: true, task: newTask }
   } catch (error) {
-    console.log(error)
     return {
       message: `Error trying to create task.`,
       success: false,
