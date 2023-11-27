@@ -40,28 +40,32 @@ export default function AuthForm({ className, ...props }: AuthFormProps) {
   const onSubmit = async (formData: FieldValues) => {
     setIsFetching(true)
 
-    const { success, message, error } =
-      await authenticateUserViaCredentials(formData)
+    try {
+      const { success, message, error } =
+        await authenticateUserViaCredentials(formData)
 
-    if (error) {
-      console.log(error)
+      if (error) {
+        console.log(error)
+        setIsFetching(false)
+        toast({
+          description: message,
+          title: 'Error!',
+        })
+      } else if (success) {
+        toast({
+          description: message,
+          title: 'Success!',
+        })
+        setIsFetching(false)
+        router.push('/tasks')
+      }
+    } catch (e) {
+      const err = e as Error
+      console.log(err.message)
       setIsFetching(false)
       toast({
-        description: message,
+        description: err.message,
         title: 'Error!',
-      })
-    } else if (success) {
-      toast({
-        description: message,
-        title: 'Success!',
-      })
-      setIsFetching(false)
-      router.push('/tasks')
-    } else {
-      setIsFetching(false)
-      toast({
-        description: 'Unexpected result of authentication.',
-        title: 'Oops!',
       })
     }
   }

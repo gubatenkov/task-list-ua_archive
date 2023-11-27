@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     template: '%s | Task List',
     default: 'Task List',
   },
-  metadataBase: new URL('https://tasks-dashboard.vercel.app'),
+  metadataBase: new URL('https://task-list-ua.pages.dev'),
   description: '',
 }
 

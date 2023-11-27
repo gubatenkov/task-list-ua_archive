@@ -43,8 +43,8 @@ export const createUser = async (formData: FieldValues) => {
     // If it does - return message
     if (existingUser) {
       return {
+        message: `User with email ${existingUser.email} already exist.`,
         error: {
-          message: `User with email ${existingUser.email} already exist.`,
           data: null,
         },
         success: false,
@@ -56,8 +56,8 @@ export const createUser = async (formData: FieldValues) => {
     return {
       error: {
         data: JSON.stringify((error as Error).message),
-        message: 'Error trying to check user data.',
       },
+      message: 'Error trying to check user data.',
       success: false,
     }
   }
@@ -81,8 +81,8 @@ export const createUser = async (formData: FieldValues) => {
     return {
       error: {
         data: JSON.stringify((error as Error).message),
-        message: 'Error while creating new user.',
       },
+      message: 'Error while creating new user.',
       success: false,
     }
   }
@@ -125,8 +125,8 @@ export async function authenticateUserViaGithub() {
     return {
       error: {
         data: JSON.stringify((error as Error).message),
-        message: 'Authentication failed.',
       },
+      message: 'Authentication failed.',
       redirectUrl: null,
       success: false,
     }
@@ -144,8 +144,8 @@ export async function signOutUser() {
     return {
       error: {
         data: JSON.stringify((error as Error).message),
-        message: 'Logout failed.',
       },
+      message: 'Logout failed.',
       success: false,
     }
   }

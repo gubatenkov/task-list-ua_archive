@@ -34,27 +34,32 @@ export default function RegisterForm({
 
   const onRegisterSubmit = async (formData: FieldValues) => {
     setIsFetching(true)
-    const response = await createUser(formData)
 
-    if (response.error) {
+    try {
+      const { message, success, error } = await createUser(formData)
+
+      if (error) {
+        setIsFetching(false)
+        toast({
+          description: message,
+          title: 'Error!',
+        })
+      } else if (success) {
+        toast({
+          description: message,
+          title: 'Success!',
+        })
+        resetFormState()
+        setIsFetching(false)
+        router.push('/login')
+      }
+    } catch (e) {
+      const err = e as Error
+      console.log(err.message)
       setIsFetching(false)
       toast({
-        description: response.error.message,
+        description: err.message,
         title: 'Error!',
-      })
-    } else if (response.success) {
-      toast({
-        description: response.message,
-        title: 'Success!',
-      })
-      resetFormState()
-      setIsFetching(false)
-      router.push('/login')
-    } else {
-      setIsFetching(false)
-      toast({
-        description: 'Unexpected result of registration.',
-        title: 'Oops!',
       })
     }
   }
