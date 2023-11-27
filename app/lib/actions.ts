@@ -226,7 +226,7 @@ export async function getUserTasks({
     const totalTaskCount = await prisma.task.count<
       { where: typeof where } | {}
     >(
-      query
+      query || priority || status
         ? {
             where,
           }

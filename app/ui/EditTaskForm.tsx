@@ -122,7 +122,7 @@ export function EditTaskForm(props: Props) {
               <FormControl>
                 <Input placeholder="Enter task title" {...field} />
               </FormControl>
-              <FormDescription className="text-xs xs:text-base">
+              <FormDescription className="text-xs xs:text-sm">
                 This field will be displayed in tasks table on{' '}
                 <span className="font-bold">/tasks </span>
                 page.

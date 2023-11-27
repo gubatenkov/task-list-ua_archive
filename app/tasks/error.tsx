@@ -1,7 +1,9 @@
 'use client'
 
-import { Button } from '@/app/ui/button'
+import { buttonVariants, Button } from '@/app/ui/button'
+import { cn } from '@/app/lib/utils'
 import { useEffect } from 'react'
+import Link from 'next/link'
 
 export default function Error({
   error,
@@ -18,15 +20,12 @@ export default function Error({
   return (
     <div className="flex h-[80vh] flex-col items-center justify-center">
       <h2 className="mb-4 text-center">Something went wrong!</h2>
-      <Button
-        onClick={
-          // Attempt to recover by trying to re-render the invoices route
-          () => reset()
-        }
-        variant="default"
+      <Link
+        className={cn(buttonVariants({ variant: 'default' }))}
+        href="/tasks"
       >
-        Try again
-      </Button>
+        Back to Tasks
+      </Link>
     </div>
   )
 }
