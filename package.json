@@ -1,6 +1,5 @@
 {
   "name": "task-list-ua",
-  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
