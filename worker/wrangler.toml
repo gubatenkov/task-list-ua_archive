@@ -1,6 +1,0 @@
-name = "worker"
-main = "src/index.ts"
-compatibility_date = "2023-11-21"
-
-[vars]
-DATABASE_URL = "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZDMxZmY3OWQtZDMzMy00NjRmLThhNzAtOTdjMWZhOTRkODQxIiwidGVuYW50X2lkIjoiOTFiOWE2MzhiNTUxODk2MDJlOWUyZjM1MjE0YmZmYmRjNzhmOGNjNzY4MmMzYjRhYjU4ZjJhMzJlNTJjZDI4MSIsImludGVybmFsX3NlY3JldCI6ImRkMjA3OGIxLTMyZjgtNGY2YS05MzhmLTE1YjI2NDAwNWI2YiJ9.Jjzvf7egfkKekdYYOHYV-9r69Ga3WQIPsSZLpsNc_S4"
