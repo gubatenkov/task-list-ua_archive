@@ -33,31 +33,19 @@ export const createUser = async (formData: FieldValues) => {
   const { password, email, name } = validatedCredentials.output
 
   // Before we create a new user, check if there is existing one
-  try {
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    })
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  })
 
-    // If it does - return message
-    if (existingUser) {
-      return {
-        message: `User with email ${existingUser.email} already exist.`,
-        error: {
-          data: null,
-        },
-        success: false,
-      }
-    }
-  } catch (error) {
-    // Handle errors
-    console.log('Error trying to check user data:', error)
+  // If it does - return message
+  if (existingUser) {
     return {
+      message: `User with email ${existingUser.email} already exist.`,
       error: {
-        data: JSON.stringify((error as Error).message),
+        data: null,
       },
-      message: 'Error trying to check user data.',
       success: false,
     }
   }
